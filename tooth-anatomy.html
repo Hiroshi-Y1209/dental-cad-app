@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歯の形を学ぶ - 基礎解剖教育</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        #root {
+            min-height: 100vh;
+            padding-bottom: 20px;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background-color: #2563eb;
+            color: white;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-bottom: 12px;
+        }
+
+        .language-toggle {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: transparent;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .lang-btn.active {
+            background-color: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .lang-btn:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .progress-bar-header {
+            display: flex;
+            gap: 4px;
+            padding: 10px 16px 0;
+            background-color: #2563eb;
+        }
+
+        .progress-dot {
+            flex: 1;
+            height: 3px;
+            border-radius: 2px;
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        .progress-dot.active {
+            background-color: white;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            background-color: white;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 11px 4px;
+            border: none;
+            background-color: white;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-width: 60px;
+        }
+
+        .tab-btn.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+
+        .tab-btn:hover {
+            background-color: #f9fafb;
+        }
+
+        .content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #dbeafe;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+            background-color: white;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+
+        .highlight-card {
+            background-color: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .highlight-card h3 {
+            color: #1e40af;
+        }
+
+        .structure-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 13px;
+        }
+
+        .structure-item:last-child {
+            border-bottom: none;
+        }
+
+        .structure-label {
+            font-weight: 600;
+            color: #2563eb;
+            min-width: 80px;
+            font-size: 12px;
+        }
+
+        .structure-desc {
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .tooth-type-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tooth-type-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 10px;
+            background-color: #f9fafb;
+        }
+
+        .tooth-type-card .emoji {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .tooth-type-card .name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 2px;
+        }
+
+        .tooth-type-card .sub {
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .tooth-type-card .detail {
+            font-size: 11px;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        th {
+            background-color: #2563eb;
+            color: white;
+            padding: 7px 6px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 7px 6px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #374151;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f9fafb;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .badge-blue {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-green {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-orange {
+            background-color: #ffedd5;
+            color: #9a3412;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .check-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .checklist-tooth-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 2px;
+        }
+
+        .checklist-points {
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .cad-tip {
+            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .cad-tip .tip-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #2563eb;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .cad-tip p {
+            font-size: 12px;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        /* Quiz styles */
+        .quiz-header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .quiz-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .quiz-progress-text {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .quiz-score-bar {
+            margin-top: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            height: 4px;
+        }
+
+        .quiz-score-fill {
+            height: 100%;
+            background: white;
+            border-radius: 4px;
+            transition: width 0.4s;
+        }
+
+        .question-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .question-number {
+            font-size: 10px;
+            font-weight: 700;
+            color: #2563eb;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .option-btn:hover:not(.answered) {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+
+        .option-btn.correct {
+            border-color: #059669;
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .option-btn.wrong {
+            border-color: #dc2626;
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .option-btn.dimmed {
+            opacity: 0.5;
+        }
+
+        .option-letter {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: #6b7280;
+        }
+
+        .option-btn.correct .option-letter {
+            background-color: #059669;
+            color: white;
+        }
+
+        .option-btn.wrong .option-letter {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .explanation-box {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .explanation-box.correct-bg {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .explanation-box.wrong-bg {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .result-card {
+            border: 2px solid #2563eb;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #eff6ff, white);
+        }
+
+        .result-emoji {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .result-score {
+            font-size: 32px;
+            font-weight: 800;
+            color: #2563eb;
+            margin-bottom: 4px;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #4b5563;
+            margin-bottom: 16px;
+        }
+
+        .retry-btn {
+            padding: 10px 24px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .retry-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        .margin-diagram {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: space-around;
+        }
+
+        .margin-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 4px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background-color: #f9fafb;
+        }
+
+        .margin-item .m-icon {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .margin-item .m-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 2px;
+        }
+
+        .margin-item .m-angle {
+            font-size: 10px;
+            color: #6b7280;
+        }
+
+        .fdi-diagram {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .fdi-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            margin-bottom: 4px;
+        }
+
+        .fdi-cell {
+            padding: 4px 2px;
+            font-size: 10px;
+            text-align: center;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .fdi-upper {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .fdi-lower {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .fdi-label {
+            font-size: 10px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const translations = {
+    ja: {
+        appTitle: "歯の形を学ぶ",
+        appSubtitle: "歯科CADの基礎 — 解剖学入門",
+        tabs: ["Step1", "Step2", "Step3", "Step4", "ゲーム"],
+        tabLabels: ["歯の解剖", "歯の識別", "咬合の基礎", "実践チェック", "クイズ"],
+
+        // Step 1
+        s1Title: "歯の解剖 (Anatomi Gigi)",
+        s1BasicTitle: "歯の基本構造",
+        s1Crown: "歯冠",
+        s1CrownDesc: "口腔内に露出した部分。エナメル質で覆われ、体内で最も硬い組織（硬度10）。",
+        s1Neck: "歯頸部",
+        s1NeckDesc: "歯冠と歯根の境界部。歯肉縁（CEJ：セメントエナメル境界）に相当。",
+        s1Root: "歯根",
+        s1RootDesc: "顎骨の中に埋まった部分。セメント質で覆われ、歯根膜で骨に固定。",
+        s1Pulp: "歯髄腔",
+        s1PulpDesc: "神経・血管・リンパ管が通る空間。感覚と栄養供給を担う。",
+        s1SurfaceTitle: "歯の5つの面",
+        s1SurfaceHdr: ["面の名称", "説明", "主な使用場面"],
+        s1Surfaces: [
+            ["唇側面（前歯）\n頬側面（臼歯）", "口唇・頬に面した外側の面", "審美評価・形態確認"],
+            ["舌側面", "舌に面した内側の面", "咬合接触・舌感確認"],
+            ["近心面", "正中（顔の中央）に近い隣接面", "コンタクトポイント確認"],
+            ["遠心面", "正中から遠い側の隣接面", "コンタクトポイント確認"],
+            ["切縁（前歯）\n咬合面（臼歯）", "咬み合わせの面", "咬合調整・咬頭形成"],
+        ],
+        s1TypesTitle: "歯の種類と特徴",
+        s1Types: [
+            {
+                emoji: "🦷",
+                name: "切歯（Incisivus）",
+                count: "上下各4本（計8本）",
+                detail: "切縁が直線的で薄い歯冠。単根。前歯部の中央に位置し、食物の切断を担う。",
+            },
+            {
+                emoji: "🔪",
+                name: "犬歯（Caninus）",
+                count: "上下各2本（計4本）",
+                detail: "先端が尖った咬頭を持つ。全歯種中で最も長い単根。側方誘導の要。",
+            },
+            {
+                emoji: "⚙️",
+                name: "小臼歯（Premolar）",
+                count: "上下各4本（計8本）",
+                detail: "頬側咬頭と舌側咬頭の2咬頭。コンパクトな歯冠。上顎第一小臼歯は2根が多い。",
+            },
+            {
+                emoji: "💪",
+                name: "大臼歯（Molar）",
+                count: "上下各6本（計12本）",
+                detail: "4〜5咬頭を持つ最大の歯冠。咀嚼の主力。上顎3根、下顎2根。",
+            },
+        ],
+
+        // Step 2
+        s2Title: "歯の識別 (Identifikasi Gigi)",
+        s2MaxMandiTitle: "上顎と下顎の違い",
+        s2MaxMandiHdr: ["特徴", "上顎（Maxilla）", "下顎（Mandibula）"],
+        s2MaxMandi: [
+            ["切歯の大きさ", "中切歯＞側切歯（大きな差）", "中切歯≒側切歯（差が小さい）"],
+            ["切歯の幅", "幅広い（中切歯9mm前後）", "狭い（中切歯5mm前後）"],
+            ["犬歯の根", "長く太い（最長根）", "やや細くわずかに短い"],
+            ["小臼歯の根", "第一小臼歯は2根が多い", "原則1根（細長い）"],
+            ["大臼歯の根", "3根（頬側2根＋口蓋根）", "2根（近心根＋遠心根）"],
+            ["大臼歯の形態", "菱形〜台形の咬合面", "長方形の咬合面"],
+        ],
+        s2LRTitle: "左右の識別ポイント",
+        s2LRPoints: [
+            "近心面はよりストレートで平坦、遠心面は丸みを帯びる",
+            "根は遠心方向（正中から遠い方向）へ傾斜する",
+            "切歯：近心切縁角は直角に近く、遠心切縁角は丸みを帯びる",
+            "接触点（コンタクト）の位置：近心側がより切端/咬合面寄り",
+        ],
+        s2FdiTitle: "歯番号（FDI方式）",
+        s2FdiDesc: "FDI方式は象限番号（1〜4）＋歯番号（1〜8）の2桁で表す。",
+        s2FdiHdr: ["象限", "上顎右（1）", "上顎左（2）", "下顎左（3）", "下顎右（4）"],
+        s2FdiRows: [
+            ["範囲", "11〜18", "21〜28", "31〜38", "41〜48"],
+        ],
+        s2FdiExample: "例：36 ＝ 下顎左（3）の第一大臼歯（6番）",
+        s2FdiUpperRight: "上顎右",
+        s2FdiUpperLeft: "上顎左",
+        s2FdiLowerLeft: "下顎左",
+        s2FdiLowerRight: "下顎右",
+
+        // Step 3
+        s3Title: "咬合の基礎 (Dasar-dasar Oklusi)",
+        s3OccTitle: "咬合とは",
+        s3OccDesc: "上下の歯が接触・噛み合う関係性のこと。正常咬合では上顎歯が下顎歯を外側（頬側）から覆い（オーバーラップ）、前後的にも前方に位置する。",
+        s3OvTitle: "オーバーバイト・オーバージェット",
+        s3OvHdr: ["用語", "定義", "正常値"],
+        s3OvRows: [
+            ["オーバーバイト\n（垂直被蓋）", "上顎前歯が下顎前歯を垂直方向に覆う量", "2〜3mm"],
+            ["オーバージェット\n（水平被蓋）", "上顎前歯が下顎前歯より前方に出る水平量", "2〜3mm"],
+        ],
+        s3ContactTitle: "咬合接触の種類",
+        s3ContactItems: [
+            { label: "臼歯部接触", desc: "面での広い接触。食物の粉砕に効率的。咬合面の咬頭と窩の接触（咬頭嵌合位）。" },
+            { label: "前歯部接触", desc: "点または線での接触。前方・側方運動の誘導機能（前方誘導・犬歯誘導）。" },
+            { label: "隣接面コンタクト", desc: "隣接する歯同士の接触点。食渣の歯間部への停滞を防ぎ、歯の位置安定に寄与。" },
+        ],
+        s3MarginTitle: "マージンラインの基礎",
+        s3MarginDesc1: "マージンラインとは、歯を削った際に形成される補綴物（クラウン等）の境界線のこと。CADデザインの第一工程はスキャンデータ上でこのラインを正確にトレースすること。",
+        s3MarginDesc2: "代表的な3形態：",
+        s3MarginHdr: ["形態", "断面角度", "特徴", "適応"],
+        s3MarginRows: [
+            ["フェザーエッジ", "鋭角（<30°）", "薄く刃状。設定が容易だが強度低い", "金属冠・インレー"],
+            ["シャンファー", "45°斜面", "最も標準的。適切な厚みを確保", "オールセラミック\nジルコニア等"],
+            ["ショルダー", "90°直角", "明確な段差。強度高い", "全部陶材冠\nポーセレン"],
+        ],
+        s3MarginDiagrams: [
+            { icon: "◺", name: "フェザーエッジ", angle: "鋭角" },
+            { icon: "◸", name: "シャンファー", angle: "45°" },
+            { icon: "▬", name: "ショルダー", angle: "90°" },
+        ],
+
+        // Step 4
+        s4Title: "歯の識別実践 (Praktik Identifikasi)",
+        s4CheckTitle: "各歯種の識別チェックリスト",
+        s4Teeth: [
+            {
+                name: "上顎中切歯",
+                points: "最大の前歯。扇形（台形）の歯冠。近心切縁角が直角に近い。近心面がストレート。単根で丸みがある。",
+            },
+            {
+                name: "上顎側切歯",
+                points: "中切歯より全体に小さい。歯冠が丸みを帯びる。遠心切縁角の丸みが顕著。遠心側に傾く単根。",
+            },
+            {
+                name: "上顎犬歯",
+                points: "尖った単一咬頭。全歯種で最も長い根。根の断面は三角形〜楕円形。側方誘導の要。",
+            },
+            {
+                name: "上顎第一小臼歯",
+                points: "頬側咬頭＞舌側咬頭（大きさ）。歯冠中央に発育溝。2根（頬側根・口蓋根）が多い。",
+            },
+            {
+                name: "上顎第一大臼歯",
+                points: "全歯種で最大の歯冠。5咬頭（カラベリー結節含む）。菱形の咬合面。3根（頬側近心・頬側遠心・口蓋根）。",
+            },
+            {
+                name: "下顎中切歯",
+                points: "全歯種で最小の歯。ほぼ対称的な形態。単根で細い。前歯部の幅を決定。",
+            },
+            {
+                name: "下顎犬歯",
+                points: "上顎犬歯より小さくやや扁平。根の断面は楕円形。歯冠が長い。",
+            },
+            {
+                name: "下顎第一大臼歯",
+                points: "5咬頭（頬側3＋舌側2）。長方形の咬合面。2根（近心根・遠心根）。近心根には2根管が多い。",
+            },
+        ],
+        s4CadTitle: "CADデザインへの応用",
+        s4CadTips: [
+            { label: "ライブラリー選択", text: "歯種を正確に識別できることで、CADソフトのライブラリーから正しい歯種テンプレートを選択できる。誤選択はデザイン全体の品質を損なう。" },
+            { label: "スキャン死角の予測", text: "根の数・方向を知ることで、スキャン時に生じやすい死角（アンダーカット部）を事前に予測し、スキャン角度を最適化できる。" },
+            { label: "咬頭形成の確認", text: "咬合面の咬頭数・走行パターンを理解することで、デザイン後の咬頭位置・高さが解剖学的に正しいか検証できる。" },
+        ],
+
+        // Game
+        gTitle: "歯の識別クイズ",
+        gSubtitle: "10問で知識を確認しよう",
+        gQ: "問題",
+        gCorrect: "正解！",
+        gWrong: "不正解",
+        gExplain: "解説：",
+        gResult: "クイズ結果",
+        gScore: "点 / 10点",
+        gRetry: "もう一度挑戦",
+        gRankings: [
+            { min: 9, emoji: "🏆", label: "完璧！プロレベルの知識です" },
+            { min: 7, emoji: "🎉", label: "すばらしい！もう少しで完璧" },
+            { min: 5, emoji: "👍", label: "良い調子！復習してさらに向上を" },
+            { min: 0, emoji: "📚", label: "Step1〜4を復習してみよう" },
+        ],
+        questions: [
+            {
+                q: "上顎第一大臼歯の根の数は？",
+                opts: ["1根", "2根", "3根", "4根"],
+                ans: 2,
+                exp: "上顎大臼歯は頬側近心根・頬側遠心根・口蓋根の3根を持ちます。",
+            },
+            {
+                q: "全歯種の中で根が最も長いのは？",
+                opts: ["切歯", "犬歯", "小臼歯", "大臼歯"],
+                ans: 1,
+                exp: "犬歯は全歯種の中で最も長い根を持ちます。特に上顎犬歯が最長です。",
+            },
+            {
+                q: "オーバーバイト（垂直被蓋）の正常値は？",
+                opts: ["0mm", "1mm以下", "2〜3mm", "5mm以上"],
+                ans: 2,
+                exp: "オーバーバイトの正常値は2〜3mmです。過大（ディープバイト）・過小いずれも咬合問題につながります。",
+            },
+            {
+                q: "マージンラインの「シャンファー」の断面角度は？",
+                opts: ["30°以下", "45°斜面", "60°", "90°直角"],
+                ans: 1,
+                exp: "シャンファーは45°の斜面形態で、最も標準的に使用されます。特にオールセラミックやジルコニア補綴に多用されます。",
+            },
+            {
+                q: "下顎大臼歯の根の数は？",
+                opts: ["1根", "2根", "3根", "4根"],
+                ans: 1,
+                exp: "下顎大臼歯は近心根と遠心根の2根です。近心根には2根管（近心頬側・近心舌側）が多く存在します。",
+            },
+            {
+                q: "歯冠を覆う体内最硬組織は？",
+                opts: ["象牙質", "セメント質", "エナメル質", "歯髄"],
+                ans: 2,
+                exp: "エナメル質は体内で最も硬い組織です（モース硬度約5〜7）。歯根はセメント質、内部は象牙質で構成されます。",
+            },
+            {
+                q: "近心面と遠心面のうち、正中（顔の中央）に近い面は？",
+                opts: ["近心面", "遠心面", "どちらも同じ", "歯種による"],
+                ans: 0,
+                exp: "近心面（Mesial）が正中に近い面、遠心面（Distal）が正中から遠い面です。左右識別の重要な基準点です。",
+            },
+            {
+                q: "上顎第一小臼歯の咬頭の数は？",
+                opts: ["1咬頭", "2咬頭", "3咬頭", "4咬頭"],
+                ans: 1,
+                exp: "小臼歯は頬側咬頭と舌側咬頭の2咬頭が基本です。上顎第一小臼歯では頬側咬頭がやや大きい。",
+            },
+            {
+                q: "食物を切断するのに最適な歯は？",
+                opts: ["大臼歯", "小臼歯", "犬歯", "切歯"],
+                ans: 3,
+                exp: "切歯（Incisivus）は直線的な切縁を持ち、食物の切断（咬断）に特化しています。大臼歯は粉砕・咀嚼を担います。",
+            },
+            {
+                q: "FDI方式で「36」が示す歯は？",
+                opts: ["上顎左第一大臼歯", "下顎左第一大臼歯", "上顎右第一大臼歯", "下顎右第一大臼歯"],
+                ans: 1,
+                exp: "FDI方式：象限3は下顎左、歯番6は第一大臼歯。よって36は下顎左第一大臼歯です。",
+            },
+        ],
+    },
+    id: {
+        appTitle: "Belajar Bentuk Gigi",
+        appSubtitle: "Dasar CAD Gigi — Pengantar Anatomi",
+        tabs: ["Step1", "Step2", "Step3", "Step4", "Game"],
+        tabLabels: ["Anatomi", "Identifikasi", "Oklusi", "Praktek", "Kuis"],
+
+        s1Title: "Anatomi Gigi",
+        s1BasicTitle: "Struktur Dasar Gigi",
+        s1Crown: "Mahkota (Crown)",
+        s1CrownDesc: "Bagian yang terlihat di rongga mulut. Dilapisi enamel, jaringan terkeras dalam tubuh.",
+        s1Neck: "Leher Gigi (Cervical)",
+        s1NeckDesc: "Batas antara mahkota dan akar. Sesuai dengan batas gusi (CEJ: sementoenamel junction).",
+        s1Root: "Akar (Root)",
+        s1RootDesc: "Bagian yang tertanam dalam tulang rahang. Dilapisi sementum, diikat oleh ligamen periodontal.",
+        s1Pulp: "Rongga Pulpa",
+        s1PulpDesc: "Ruang yang dilalui saraf, pembuluh darah, dan limfa. Berfungsi untuk sensasi dan nutrisi.",
+        s1SurfaceTitle: "5 Permukaan Gigi",
+        s1SurfaceHdr: ["Nama Permukaan", "Keterangan", "Penggunaan Utama"],
+        s1Surfaces: [
+            ["Labial (gigi depan)\nBukal (geraham)", "Permukaan menghadap bibir/pipi", "Evaluasi estetik"],
+            ["Lingual/Palatal", "Permukaan menghadap lidah/langit-langit", "Kontak oklusi"],
+            ["Mesial", "Permukaan proksimal dekat garis tengah", "Cek kontak proksimal"],
+            ["Distal", "Permukaan proksimal jauh dari garis tengah", "Cek kontak proksimal"],
+            ["Insisal (depan)\nOklusal (geraham)", "Permukaan gigitan", "Penyesuaian oklusi"],
+        ],
+        s1TypesTitle: "Jenis dan Ciri Gigi",
+        s1Types: [
+            {
+                emoji: "🦷",
+                name: "Insisivus (Gigi Seri)",
+                count: "Atas & bawah masing-masing 4 (total 8)",
+                detail: "Tepi insisal lurus dan tipis. Berakar tunggal. Berfungsi memotong makanan.",
+            },
+            {
+                emoji: "🔪",
+                name: "Kaninus (Gigi Taring)",
+                count: "Atas & bawah masing-masing 2 (total 4)",
+                detail: "Memiliki cusp runcing. Akar tunggal terpanjang di antara semua gigi. Panduan lateral.",
+            },
+            {
+                emoji: "⚙️",
+                name: "Premolar (Gigi Geraham Kecil)",
+                count: "Atas & bawah masing-masing 4 (total 8)",
+                detail: "2 cusp: bukal dan lingual. Mahkota kompak. Premolar pertama atas sering berakar 2.",
+            },
+            {
+                emoji: "💪",
+                name: "Molar (Gigi Geraham Besar)",
+                count: "Atas & bawah masing-masing 6 (total 12)",
+                detail: "Mahkota terbesar dengan 4-5 cusp. Tulang belakang pengunyahan. Atas 3 akar, bawah 2 akar.",
+            },
+        ],
+
+        s2Title: "Identifikasi Gigi",
+        s2MaxMandiTitle: "Perbedaan Rahang Atas dan Bawah",
+        s2MaxMandiHdr: ["Ciri", "Rahang Atas (Maxilla)", "Rahang Bawah (Mandibula)"],
+        s2MaxMandi: [
+            ["Ukuran insisivus", "Insisivus sentral > lateral (beda besar)", "Sentral ≈ lateral (beda kecil)"],
+            ["Lebar insisivus", "Lebar (sentral ~9mm)", "Sempit (sentral ~5mm)"],
+            ["Akar kaninus", "Panjang dan besar (akar terpanjang)", "Agak lebih kecil dan pendek"],
+            ["Akar premolar", "Premolar pertama sering 2 akar", "Umumnya 1 akar (ramping)"],
+            ["Akar molar", "3 akar (2 bukal + 1 palatal)", "2 akar (mesial + distal)"],
+            ["Bentuk oklusal molar", "Permukaan belah ketupat/trapesoid", "Permukaan persegi panjang"],
+        ],
+        s2LRTitle: "Cara Membedakan Kiri dan Kanan",
+        s2LRPoints: [
+            "Permukaan mesial lebih lurus dan datar; permukaan distal lebih membulat",
+            "Akar miring ke arah distal (menjauhi garis tengah)",
+            "Insisivus: sudut insisal mesial hampir tegak lurus, sudut distal lebih membulat",
+            "Posisi kontak proksimal: sisi mesial lebih dekat ke tepi insisal/oklusal",
+        ],
+        s2FdiTitle: "Nomor Gigi (Sistem FDI)",
+        s2FdiDesc: "Sistem FDI menggunakan 2 digit: nomor kuadran (1-4) + nomor gigi (1-8).",
+        s2FdiHdr: ["Kuadran", "Kanan Atas (1)", "Kiri Atas (2)", "Kiri Bawah (3)", "Kanan Bawah (4)"],
+        s2FdiRows: [
+            ["Rentang", "11〜18", "21〜28", "31〜38", "41〜48"],
+        ],
+        s2FdiExample: "Contoh: 36 = Kiri bawah (3), molar pertama (6) = molar pertama kiri bawah",
+        s2FdiUpperRight: "Kanan Atas",
+        s2FdiUpperLeft: "Kiri Atas",
+        s2FdiLowerLeft: "Kiri Bawah",
+        s2FdiLowerRight: "Kanan Bawah",
+
+        s3Title: "Dasar-dasar Oklusi",
+        s3OccTitle: "Apa Itu Oklusi?",
+        s3OccDesc: "Oklusi adalah hubungan kontak antara gigi atas dan bawah. Pada oklusi normal, gigi atas menutupi gigi bawah dari sisi luar (overlap) dan secara anteroposterior berada lebih ke depan.",
+        s3OvTitle: "Overbite dan Overjet",
+        s3OvHdr: ["Istilah", "Definisi", "Nilai Normal"],
+        s3OvRows: [
+            ["Overbite\n(Tumpang gigit vertikal)", "Jumlah vertikal gigi depan atas menutupi gigi depan bawah", "2〜3mm"],
+            ["Overjet\n(Tumpang gigit horizontal)", "Jarak horizontal gigi depan atas lebih maju dari gigi bawah", "2〜3mm"],
+        ],
+        s3ContactTitle: "Jenis Kontak Oklusi",
+        s3ContactItems: [
+            { label: "Kontak Posterior (Molar)", desc: "Kontak luas berbentuk area. Efisien dalam menghancurkan makanan. Kontak antara cusp dan fossa (intercuspation)." },
+            { label: "Kontak Anterior (Depan)", desc: "Kontak berupa titik atau garis. Berfungsi sebagai panduan gerak anterior dan lateral (panduan anterior/kaninus)." },
+            { label: "Kontak Proksimal", desc: "Kontak antara gigi yang berdampingan. Mencegah sisa makanan menumpuk dan menjaga posisi gigi tetap stabil." },
+        ],
+        s3MarginTitle: "Dasar-dasar Garis Margin",
+        s3MarginDesc1: "Garis margin adalah batas preparasi gigi tempat tepi restorasi (mahkota, dll.) bersandar. Langkah pertama desain CAD adalah menelusuri garis ini secara akurat pada data scan.",
+        s3MarginDesc2: "Tiga bentuk utama:",
+        s3MarginHdr: ["Bentuk", "Sudut", "Ciri", "Indikasi"],
+        s3MarginRows: [
+            ["Feather Edge", "Sudut lancip (<30°)", "Tipis seperti pisau. Mudah dibuat, kekuatan rendah", "Mahkota logam, inlay"],
+            ["Chamfer", "45° miring", "Paling standar. Ketebalan material terjamin", "All-ceramic, zirkonia, dll."],
+            ["Shoulder", "90° tegak lurus", "Batas jelas. Kekuatan tinggi", "Mahkota porselen penuh"],
+        ],
+        s3MarginDiagrams: [
+            { icon: "◺", name: "Feather Edge", angle: "Lancip" },
+            { icon: "◸", name: "Chamfer", angle: "45°" },
+            { icon: "▬", name: "Shoulder", angle: "90°" },
+        ],
+
+        s4Title: "Praktik Identifikasi Gigi",
+        s4CheckTitle: "Daftar Identifikasi per Jenis Gigi",
+        s4Teeth: [
+            {
+                name: "Insisivus Sentral Atas",
+                points: "Gigi depan terbesar. Mahkota seperti kipas/trapesoid. Sudut insisal mesial hampir tegak. Permukaan mesial lurus. Akar tunggal membulat.",
+            },
+            {
+                name: "Insisivus Lateral Atas",
+                points: "Lebih kecil dari sentral. Mahkota lebih membulat. Sudut distal sangat membulat. Akar tunggal miring ke distal.",
+            },
+            {
+                name: "Kaninus Atas",
+                points: "Cusp tunggal yang runcing. Akar terpanjang di antara semua gigi. Penampang akar segitiga hingga elips. Kunci panduan lateral.",
+            },
+            {
+                name: "Premolar Pertama Atas",
+                points: "Cusp bukal > cusp lingual (ukuran). Ada developmental groove di tengah oklusal. Sering berakar 2 (bukal dan palatal).",
+            },
+            {
+                name: "Molar Pertama Atas",
+                points: "Gigi dengan mahkota terbesar. 5 cusp termasuk cusp Carabelli. Permukaan oklusal berbentuk belah ketupat. 3 akar (MB, DB, palatal).",
+            },
+            {
+                name: "Insisivus Sentral Bawah",
+                points: "Gigi terkecil di seluruh rongga mulut. Bentuk hampir simetris. Akar tunggal dan ramping. Menentukan lebar anterior bawah.",
+            },
+            {
+                name: "Kaninus Bawah",
+                points: "Lebih kecil dan lebih pipih dari kaninus atas. Penampang akar elips. Mahkota lebih panjang secara vertikal.",
+            },
+            {
+                name: "Molar Pertama Bawah",
+                points: "5 cusp (3 bukal + 2 lingual). Permukaan oklusal persegi panjang. 2 akar (mesial + distal). Akar mesial sering memiliki 2 saluran akar.",
+            },
+        ],
+        s4CadTitle: "Penerapan dalam Desain CAD",
+        s4CadTips: [
+            { label: "Pemilihan Library", text: "Identifikasi gigi yang akurat memungkinkan pemilihan template gigi yang tepat dari library CAD. Kesalahan memilih jenis gigi akan merusak kualitas seluruh desain." },
+            { label: "Prediksi Dead Angle Scan", text: "Mengetahui jumlah dan arah akar membantu memprediksi area yang sulit di-scan (undercut), sehingga sudut scanning dapat dioptimalkan sebelumnya." },
+            { label: "Verifikasi Cusp", text: "Memahami pola cusp dan fossa pada permukaan oklusal memungkinkan verifikasi akurat apakah posisi dan tinggi cusp dalam desain sudah sesuai anatomi." },
+        ],
+
+        gTitle: "Kuis Identifikasi Gigi",
+        gSubtitle: "Uji pengetahuan dengan 10 soal",
+        gQ: "Soal",
+        gCorrect: "Benar!",
+        gWrong: "Salah",
+        gExplain: "Penjelasan: ",
+        gResult: "Hasil Kuis",
+        gScore: "poin / 10 poin",
+        gRetry: "Coba Lagi",
+        gRankings: [
+            { min: 9, emoji: "🏆", label: "Sempurna! Pengetahuan level profesional" },
+            { min: 7, emoji: "🎉", label: "Luar biasa! Hampir sempurna" },
+            { min: 5, emoji: "👍", label: "Bagus! Pelajari lagi untuk meningkat" },
+            { min: 0, emoji: "📚", label: "Pelajari kembali Step 1-4" },
+        ],
+        questions: [
+            {
+                q: "Berapa jumlah akar molar pertama atas?",
+                opts: ["1 akar", "2 akar", "3 akar", "4 akar"],
+                ans: 2,
+                exp: "Molar atas memiliki 3 akar: mesiobukkal, distobukkal, dan palatal.",
+            },
+            {
+                q: "Gigi mana yang memiliki akar paling panjang?",
+                opts: ["Insisivus", "Kaninus", "Premolar", "Molar"],
+                ans: 1,
+                exp: "Kaninus memiliki akar terpanjang di antara semua gigi. Kaninus atas adalah yang paling panjang.",
+            },
+            {
+                q: "Nilai normal overbite adalah?",
+                opts: ["0mm", "Kurang dari 1mm", "2〜3mm", "5mm atau lebih"],
+                ans: 2,
+                exp: "Nilai normal overbite adalah 2-3mm. Terlalu besar (deep bite) atau terlalu kecil sama-sama bermasalah.",
+            },
+            {
+                q: "Sudut potongan garis margin 'chamfer' adalah?",
+                opts: ["Kurang dari 30°", "45° miring", "60°", "90° tegak lurus"],
+                ans: 1,
+                exp: "Chamfer berbentuk miring 45°, merupakan bentuk paling standar terutama untuk all-ceramic dan zirkonia.",
+            },
+            {
+                q: "Berapa jumlah akar molar bawah?",
+                opts: ["1 akar", "2 akar", "3 akar", "4 akar"],
+                ans: 1,
+                exp: "Molar bawah memiliki 2 akar: mesial dan distal. Akar mesial sering memiliki 2 saluran akar.",
+            },
+            {
+                q: "Jaringan terkeras dalam tubuh yang melapisi mahkota gigi adalah?",
+                opts: ["Dentin", "Sementum", "Enamel", "Pulpa"],
+                ans: 2,
+                exp: "Enamel adalah jaringan terkeras dalam tubuh (skala Mohs ~5-7). Akar dilapisi sementum, dalamnya dentin.",
+            },
+            {
+                q: "Di antara permukaan mesial dan distal, mana yang lebih dekat ke garis tengah wajah?",
+                opts: ["Mesial", "Distal", "Keduanya sama", "Tergantung gigi"],
+                ans: 0,
+                exp: "Mesial adalah permukaan yang lebih dekat ke garis tengah, distal adalah yang lebih jauh. Ini penting untuk identifikasi kiri-kanan.",
+            },
+            {
+                q: "Berapa jumlah cusp premolar pertama atas?",
+                opts: ["1 cusp", "2 cusp", "3 cusp", "4 cusp"],
+                ans: 1,
+                exp: "Premolar memiliki 2 cusp dasar: bukal dan lingual. Pada premolar pertama atas, cusp bukal sedikit lebih besar.",
+            },
+            {
+                q: "Gigi yang paling cocok untuk memotong makanan adalah?",
+                opts: ["Molar", "Premolar", "Kaninus", "Insisivus"],
+                ans: 3,
+                exp: "Insisivus memiliki tepi insisal yang lurus, dirancang khusus untuk memotong (menggigit) makanan. Molar berfungsi mengunyah.",
+            },
+            {
+                q: "Dalam sistem FDI, angka '36' merujuk ke gigi apa?",
+                opts: ["Molar pertama kiri atas", "Molar pertama kiri bawah", "Molar pertama kanan atas", "Molar pertama kanan bawah"],
+                ans: 1,
+                exp: "Sistem FDI: kuadran 3 = kiri bawah, angka 6 = molar pertama. Jadi 36 = molar pertama kiri bawah.",
+            },
+        ],
+    },
+};
+
+function Step1({ t }) {
+    return (
+        <div>
+            <div className="section-title">🦷 {t.s1Title}</div>
+
+            <div className="card highlight-card">
+                <h3>🏗️ {t.s1BasicTitle}</h3>
+                <div className="structure-item">
+                    <span className="structure-label">{t.s1Crown}</span>
+                    <span className="structure-desc">{t.s1CrownDesc}</span>
+                </div>
+                <div className="structure-item">
+                    <span className="structure-label">{t.s1Neck}</span>
+                    <span className="structure-desc">{t.s1NeckDesc}</span>
+                </div>
+                <div className="structure-item">
+                    <span className="structure-label">{t.s1Root}</span>
+                    <span className="structure-desc">{t.s1RootDesc}</span>
+                </div>
+                <div className="structure-item">
+                    <span className="structure-label">{t.s1Pulp}</span>
+                    <span className="structure-desc">{t.s1PulpDesc}</span>
+                </div>
+            </div>
+
+            <div className="card">
+                <h3>📐 {t.s1SurfaceTitle}</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            {t.s1SurfaceHdr.map((h, i) => <th key={i}>{h}</th>)}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {t.s1Surfaces.map((row, i) => (
+                            <tr key={i}>
+                                {row.map((cell, j) => (
+                                    <td key={j} style={{ whiteSpace: 'pre-line' }}>{cell}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <div className="card">
+                <h3>🔬 {t.s1TypesTitle}</h3>
+                <div className="tooth-type-grid">
+                    {t.s1Types.map((tt, i) => (
+                        <div key={i} className="tooth-type-card">
+                            <span className="emoji">{tt.emoji}</span>
+                            <div className="name">{tt.name}</div>
+                            <div className="sub">{tt.count}</div>
+                            <div className="detail">{tt.detail}</div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function Step2({ t }) {
+    const upperFdi = ["11","12","13","14","15","16","17","18"].reverse();
+    const upperFdiL = ["21","22","23","24","25","26","27","28"];
+    const lowerFdiL = ["31","32","33","34","35","36","37","38"];
+    const lowerFdi = ["41","42","43","44","45","46","47","48"].reverse();
+
+    return (
+        <div>
+            <div className="section-title">🔍 {t.s2Title}</div>
+
+            <div className="card">
+                <h3>⬆️⬇️ {t.s2MaxMandiTitle}</h3>
+                <table>
+                    <thead>
+                        <tr>{t.s2MaxMandiHdr.map((h, i) => <th key={i}>{h}</th>)}</tr>
+                    </thead>
+                    <tbody>
+                        {t.s2MaxMandi.map((row, i) => (
+                            <tr key={i}>
+                                {row.map((cell, j) => <td key={j}>{cell}</td>)}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <div className="card highlight-card">
+                <h3>↔️ {t.s2LRTitle}</h3>
+                {t.s2LRPoints.map((pt, i) => (
+                    <div key={i} className="structure-item">
+                        <div className="check-icon">✓</div>
+                        <span className="structure-desc">{pt}</span>
+                    </div>
+                ))}
+            </div>
+
+            <div className="card">
+                <h3>🔢 {t.s2FdiTitle}</h3>
+                <p style={{ fontSize: '12px', color: '#4b5563', marginBottom: '8px' }}>{t.s2FdiDesc}</p>
+
+                <div className="fdi-diagram">
+                    <div className="fdi-label">{t.s2FdiUpperRight} ← | → {t.s2FdiUpperLeft}</div>
+                    <div className="fdi-grid">
+                        {upperFdi.map(n => <div key={n} className="fdi-cell fdi-upper">{n}</div>)}
+                        {upperFdiL.map(n => <div key={n} className="fdi-cell fdi-upper">{n}</div>)}
+                    </div>
+                    <div style={{ borderTop: '2px dashed #94a3b8', margin: '4px 0' }}></div>
+                    <div className="fdi-grid">
+                        {lowerFdi.map(n => <div key={n} className="fdi-cell fdi-lower">{n}</div>)}
+                        {lowerFdiL.map(n => <div key={n} className="fdi-cell fdi-lower">{n}</div>)}
+                    </div>
+                    <div className="fdi-label" style={{ marginTop: '4px' }}>{t.s2FdiLowerRight} ← | → {t.s2FdiLowerLeft}</div>
+                </div>
+
+                <div style={{ marginTop: '10px', padding: '8px 10px', backgroundColor: '#fefce8', border: '1px solid #fde047', borderRadius: '6px', fontSize: '12px', color: '#713f12' }}>
+                    💡 {t.s2FdiExample}
+                </div>
+
+                <table style={{ marginTop: '10px' }}>
+                    <thead>
+                        <tr>{t.s2FdiHdr.map((h, i) => <th key={i}>{h}</th>)}</tr>
+                    </thead>
+                    <tbody>
+                        {t.s2FdiRows.map((row, i) => (
+                            <tr key={i}>
+                                {row.map((cell, j) => <td key={j}>{cell}</td>)}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
+
+function Step3({ t }) {
+    return (
+        <div>
+            <div className="section-title">⚖️ {t.s3Title}</div>
+
+            <div className="card highlight-card">
+                <h3>💬 {t.s3OccTitle}</h3>
+                <p>{t.s3OccDesc}</p>
+            </div>
+
+            <div className="card">
+                <h3>📏 {t.s3OvTitle}</h3>
+                <table>
+                    <thead>
+                        <tr>{t.s3OvHdr.map((h, i) => <th key={i}>{h}</th>)}</tr>
+                    </thead>
+                    <tbody>
+                        {t.s3OvRows.map((row, i) => (
+                            <tr key={i}>
+                                {row.map((cell, j) => (
+                                    <td key={j} style={{ whiteSpace: 'pre-line' }}>{cell}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <div className="card">
+                <h3>🤝 {t.s3ContactTitle}</h3>
+                {t.s3ContactItems.map((item, i) => (
+                    <div key={i} className="structure-item">
+                        <div>
+                            <div style={{ fontSize: '12px', fontWeight: '700', color: '#2563eb', marginBottom: '2px' }}>{item.label}</div>
+                            <div style={{ fontSize: '12px', color: '#4b5563', lineHeight: '1.5' }}>{item.desc}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <div className="card">
+                <h3>✂️ {t.s3MarginTitle}</h3>
+                <p style={{ fontSize: '12px', color: '#4b5563', lineHeight: '1.6', marginBottom: '8px' }}>{t.s3MarginDesc1}</p>
+                <p style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>{t.s3MarginDesc2}</p>
+
+                <div className="margin-diagram">
+                    {t.s3MarginDiagrams.map((m, i) => (
+                        <div key={i} className="margin-item">
+                            <div className="m-icon">{m.icon}</div>
+                            <div className="m-name">{m.name}</div>
+                            <div className="m-angle">{m.angle}</div>
+                        </div>
+                    ))}
+                </div>
+
+                <table style={{ marginTop: '10px' }}>
+                    <thead>
+                        <tr>{t.s3MarginHdr.map((h, i) => <th key={i}>{h}</th>)}</tr>
+                    </thead>
+                    <tbody>
+                        {t.s3MarginRows.map((row, i) => (
+                            <tr key={i}>
+                                {row.map((cell, j) => (
+                                    <td key={j} style={{ whiteSpace: 'pre-line' }}>{cell}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
+
+function Step4({ t }) {
+    return (
+        <div>
+            <div className="section-title">✅ {t.s4Title}</div>
+
+            <div className="card">
+                <h3>📋 {t.s4CheckTitle}</h3>
+                {t.s4Teeth.map((tooth, i) => (
+                    <div key={i} className="checklist-item">
+                        <div className="check-icon">{i + 1}</div>
+                        <div>
+                            <div className="checklist-tooth-name">{tooth.name}</div>
+                            <div className="checklist-points">{tooth.points}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <div className="card highlight-card">
+                <h3>💻 {t.s4CadTitle}</h3>
+                {t.s4CadTips.map((tip, i) => (
+                    <div key={i} className="cad-tip" style={{ marginBottom: i < t.s4CadTips.length - 1 ? '8px' : '0' }}>
+                        <div className="tip-label">▶ {tip.label}</div>
+                        <p>{tip.text}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function Game({ t }) {
+    const [answers, setAnswers] = useState({});
+    const [showResult, setShowResult] = useState(false);
+
+    const handleAnswer = (qIdx, optIdx) => {
+        if (answers[qIdx] !== undefined) return;
+        const next = { ...answers, [qIdx]: optIdx };
+        setAnswers(next);
+        if (Object.keys(next).length === t.questions.length) {
+            setTimeout(() => setShowResult(true), 400);
+        }
+    };
+
+    const score = Object.entries(answers).filter(([qi, ai]) => t.questions[parseInt(qi)].ans === ai).length;
+
+    const getRank = (s) => {
+        for (const r of t.gRankings) {
+            if (s >= r.min) return r;
+        }
+        return t.gRankings[t.gRankings.length - 1];
+    };
+
+    const handleRetry = () => {
+        setAnswers({});
+        setShowResult(false);
+    };
+
+    const answeredCount = Object.keys(answers).length;
+
+    if (showResult) {
+        const rank = getRank(score);
+        return (
+            <div>
+                <div className="section-title">🎯 {t.gResult}</div>
+                <div className="result-card">
+                    <div className="result-emoji">{rank.emoji}</div>
+                    <div className="result-score">{score}</div>
+                    <div className="result-label">{t.gScore}</div>
+                    <div style={{ fontSize: '14px', color: '#374151', marginBottom: '20px', fontWeight: '500' }}>{rank.label}</div>
+                    <button className="retry-btn" onClick={handleRetry}>{t.gRetry}</button>
+                </div>
+
+                <div style={{ marginTop: '16px' }}>
+                    {t.questions.map((q, qi) => {
+                        const userAns = answers[qi];
+                        const isCorrect = userAns === q.ans;
+                        return (
+                            <div key={qi} className="card" style={{ borderColor: isCorrect ? '#059669' : '#dc2626' }}>
+                                <div className="question-number">{t.gQ} {qi + 1}</div>
+                                <div className="question-text">{q.q}</div>
+                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                                    {q.opts.map((opt, oi) => (
+                                        <span key={oi} style={{
+                                            padding: '3px 8px',
+                                            borderRadius: '4px',
+                                            fontSize: '12px',
+                                            backgroundColor: oi === q.ans ? '#d1fae5' : oi === userAns && !isCorrect ? '#fee2e2' : '#f3f4f6',
+                                            color: oi === q.ans ? '#065f46' : oi === userAns && !isCorrect ? '#991b1b' : '#6b7280',
+                                            fontWeight: oi === q.ans ? '700' : '400',
+                                        }}>{opt}</span>
+                                    ))}
+                                </div>
+                                <div className={`explanation-box ${isCorrect ? 'correct-bg' : 'wrong-bg'}`}>
+                                    {isCorrect ? '✓ ' : '✗ '}{t.gExplain}{q.exp}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div>
+            <div className="quiz-header">
+                <h3>🎯 {t.gTitle}</h3>
+                <div className="quiz-progress-text">{t.gSubtitle} — {answeredCount} / {t.questions.length}</div>
+                <div className="quiz-score-bar">
+                    <div className="quiz-score-fill" style={{ width: `${(answeredCount / t.questions.length) * 100}%` }}></div>
+                </div>
+            </div>
+
+            {t.questions.map((q, qi) => {
+                const userAns = answers[qi];
+                const answered = userAns !== undefined;
+                return (
+                    <div key={qi} className="question-card">
+                        <div className="question-number">{t.gQ} {qi + 1} / {t.questions.length}</div>
+                        <div className="question-text">{q.q}</div>
+                        <div className="options-list">
+                            {q.opts.map((opt, oi) => {
+                                let cls = 'option-btn';
+                                if (answered) {
+                                    if (oi === q.ans) cls += ' correct';
+                                    else if (oi === userAns) cls += ' wrong';
+                                    else cls += ' dimmed';
+                                }
+                                return (
+                                    <button
+                                        key={oi}
+                                        className={cls + (answered ? ' answered' : '')}
+                                        onClick={() => handleAnswer(qi, oi)}
+                                    >
+                                        <span className="option-letter">{String.fromCharCode(97 + oi)}</span>
+                                        {opt}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {answered && (
+                            <div className={`explanation-box ${userAns === q.ans ? 'correct-bg' : 'wrong-bg'}`}>
+                                {userAns === q.ans ? `✓ ${t.gCorrect}` : `✗ ${t.gWrong}`} — {t.gExplain}{q.exp}
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
+function App() {
+    const [lang, setLang] = useState('ja');
+    const [activeTab, setActiveTab] = useState(0);
+    const t = translations[lang];
+
+    const tabComponents = [
+        <Step1 t={t} />,
+        <Step2 t={t} />,
+        <Step3 t={t} />,
+        <Step4 t={t} />,
+        <Game t={t} key={lang} />,
+    ];
+
+    return (
+        <div className="container">
+            <div className="header">
+                <h1>{t.appTitle}</h1>
+                <p>{t.appSubtitle}</p>
+                <div className="language-toggle">
+                    <button
+                        className={`lang-btn ${lang === 'ja' ? 'active' : ''}`}
+                        onClick={() => setLang('ja')}
+                    >日本語</button>
+                    <button
+                        className={`lang-btn ${lang === 'id' ? 'active' : ''}`}
+                        onClick={() => setLang('id')}
+                    >Bahasa Indonesia</button>
+                </div>
+            </div>
+
+            <div className="progress-bar-header">
+                {t.tabs.map((_, i) => (
+                    <div key={i} className={`progress-dot ${i <= activeTab ? 'active' : ''}`}></div>
+                ))}
+            </div>
+
+            <div className="tabs">
+                {t.tabs.map((tab, i) => (
+                    <button
+                        key={i}
+                        className={`tab-btn ${activeTab === i ? 'active' : ''}`}
+                        onClick={() => setActiveTab(i)}
+                    >
+                        <div>{tab}</div>
+                        <div style={{ fontSize: '9px', opacity: 0.7, marginTop: '1px' }}>{t.tabLabels[i]}</div>
+                    </button>
+                ))}
+            </div>
+
+            <div className="content">
+                {tabComponents[activeTab]}
+            </div>
+        </div>
+    );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
